@@ -1,0 +1,15 @@
+version: '2'
+services:
+    producer:
+        build: .
+        ports: 
+            - 8888:8888
+        depends_on:
+            - kafka
+        environment:
+            - LOG_LEVEL=debug
+            - LOG_FILE_NAME=api.log
+            - LOG_TO_FILE=false
+    kafka:
+        image: spotify/kafka:latest
+    
