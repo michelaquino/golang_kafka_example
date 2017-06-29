@@ -16,9 +16,6 @@ func SendSyncMessage(echoContext echo.Context) error {
 	logger := context.GetLogger()
 	requestLogData := echoContext.Get(apiMiddleware.RequestIDKey).(models.RequestLogData)
 
-	// config := sarama.NewConfig()
-	// config.Producer.Return.Successes = true
-
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
@@ -32,7 +29,7 @@ func SendSyncMessage(echoContext echo.Context) error {
 
 	defer producer.Close()
 
-	topic := "my-kafka-topic"
+	topic := "sync-topic"
 	message := sarama.ProducerMessage{
 		Topic: topic,
 		Key:   sarama.StringEncoder("message key"),
