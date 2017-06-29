@@ -32,7 +32,7 @@ func SendSyncMessage(echoContext echo.Context) error {
 
 	defer producer.Close()
 
-	topic := "important"
+	topic := "my-kafka-topic"
 	message := sarama.ProducerMessage{
 		Topic: topic,
 		Key:   sarama.StringEncoder("message key"),
