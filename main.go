@@ -17,6 +17,9 @@ func main() {
 
 	echoInstance.GET("/healthcheck", handlers.Healthcheck)
 
+	// echoInstance.GET("/producer/async", handlers.Healthcheck)
+	echoInstance.GET("/producer/sync", handlers.SendSyncMessage)
+
 	logger.Info("Main", "main", "", "", "start app", "success", "Started at port 8888!")
 	echoInstance.Logger.Fatal(echoInstance.Start(":8888"))
 }
