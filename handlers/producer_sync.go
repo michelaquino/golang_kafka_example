@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/Shopify/sarama"
 	"github.com/labstack/echo"
@@ -21,7 +22,8 @@ func SendSyncMessage(echoContext echo.Context) error {
 	config.Producer.Retry.Max = 5
 	config.Producer.Return.Successes = true
 
-	producer, err := sarama.NewSyncProducer([]string{"kafka:9092"}, config)
+	kafkaURL := os.Getenv("KAFKA_URL")
+	producer, err := sarama.NewSyncProducer([]string{kafkaURL}, config)
 	if err != nil {
 		logger.Error("Handlers", "SendSyncMessage", requestLogData.ID, requestLogData.OriginIP, "Try to connect to kafka host", "Error", err.Error())
 		return echoContext.NoContent(http.StatusInternalServerError)

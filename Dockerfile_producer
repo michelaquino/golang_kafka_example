@@ -5,10 +5,10 @@ FROM golang:1.8
 ADD . $GOPATH/src/github.com/michelaquino/golang_kafka_example
 
 # Instala a aplicacao
-RUN go install github.com/michelaquino/golang_kafka_example
+RUN go install github.com/michelaquino/golang_kafka_example/cmd/producer
 
 # Executa a aplicacao quando o container for iniciado
-ENTRYPOINT $GOPATH/bin/golang_kafka_example
+ENTRYPOINT $GOPATH/bin/producer
 
 # Expoe a porta 8080
 EXPOSE 8080
