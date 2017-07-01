@@ -17,6 +17,17 @@ func SendSyncMessage(echoContext echo.Context) error {
 	logger := context.GetLogger()
 	requestLogData := echoContext.Get(apiMiddleware.RequestIDKey).(models.RequestLogData)
 
+	type messageToEnqueue struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	}
+
+	var message messageToEnqueue
+	if err := echoContext.Bind(&message); err != nil {
+		logger.Error("Handlers", "SendSyncMessage", requestLogData.ID, requestLogData.OriginIP, "Bind payload to object", "Error", err.Error())
+		return echoContext.NoContent(http.StatusBadGateway)
+	}
+
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 5
@@ -32,13 +43,13 @@ func SendSyncMessage(echoContext echo.Context) error {
 	defer producer.Close()
 
 	asyncTopic := os.Getenv("KAFKA_SYNC_TOPIC")
-	message := sarama.ProducerMessage{
+	kafkaMessage := sarama.ProducerMessage{
 		Topic: asyncTopic,
-		Key:   sarama.StringEncoder("message key"),
-		Value: sarama.StringEncoder("message value"),
+		Key:   sarama.StringEncoder(message.Key),
+		Value: sarama.StringEncoder(message.Value),
 	}
 
-	partition, offset, err := producer.SendMessage(&message)
+	partition, offset, err := producer.SendMessage(&kafkaMessage)
 	if err != nil {
 		logger.Error("Handlers", "SendSyncMessage", requestLogData.ID, requestLogData.OriginIP, "Send sync message", "Error", err.Error())
 		return echoContext.String(http.StatusInternalServerError, "Error to send message")
