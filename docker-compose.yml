@@ -13,6 +13,8 @@ services:
             - LOG_FILE_NAME=api.log
             - LOG_TO_FILE=false
             - KAFKA_URL=kafka:9092
+            - KAFKA_SYNC_TOPIC=sync-topic
+            - KAFKA_ASYNC_TOPIC=async-topic
     sync_consumer:
         build:
             context: .
