@@ -17,7 +17,7 @@ func main() {
 
 	echoInstance.GET("/healthcheck", handlers.Healthcheck)
 
-	// echoInstance.GET("/producer/async", handlers.Healthcheck)
+	echoInstance.POST("/producer/async", handlers.SendAsyncMessage)
 	echoInstance.POST("/producer/sync", handlers.SendSyncMessage)
 
 	logger.Info("Main", "main", "", "", "start app", "success", "Started at port 8888!")

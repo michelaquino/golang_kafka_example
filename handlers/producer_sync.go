@@ -42,9 +42,9 @@ func SendSyncMessage(echoContext echo.Context) error {
 
 	defer producer.Close()
 
-	asyncTopic := os.Getenv("KAFKA_SYNC_TOPIC")
+	syncTopic := os.Getenv("KAFKA_SYNC_TOPIC")
 	kafkaMessage := sarama.ProducerMessage{
-		Topic: asyncTopic,
+		Topic: syncTopic,
 		Key:   sarama.StringEncoder(message.Key),
 		Value: sarama.StringEncoder(message.Value),
 	}
@@ -56,5 +56,5 @@ func SendSyncMessage(echoContext echo.Context) error {
 	}
 
 	logger.Info("Handlers", "SendSyncMessage", requestLogData.ID, requestLogData.OriginIP, "Send sync message", "Success", "")
-	return echoContext.String(http.StatusOK, fmt.Sprintf("Message stored in topic %s, partition %d, offset %d", asyncTopic, partition, offset))
+	return echoContext.String(http.StatusOK, fmt.Sprintf("Message stored in topic %s, partition %d, offset %d", syncTopic, partition, offset))
 }
