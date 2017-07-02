@@ -1,6 +1,5 @@
-# golang_kafka_example
+# Golang Kafka Example
 A simple example to how to use Kafka with Go (golang)
-
 
 # Dependencies
 - Docker
