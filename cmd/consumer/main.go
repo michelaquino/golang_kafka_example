@@ -15,7 +15,7 @@ func main() {
 
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
-	time.Sleep(5000 * time.Millisecond)
+	time.Sleep(5000 * time.Millisecond) // Hack to wait kafka starts. Don't do this in production
 
 	kafkaURL := os.Getenv("KAFKA_URL")
 	master, err := sarama.NewConsumer([]string{kafkaURL}, config)
