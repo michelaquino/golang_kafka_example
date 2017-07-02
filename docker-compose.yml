@@ -27,6 +27,18 @@ services:
             - LOG_TO_FILE=false
             - KAFKA_URL=kafka:9092
             - KAFKA_TOPIC_TO_CONSUMER=sync-topic
+    async_consumer:
+        build:
+            context: .
+            dockerfile: Dockerfile_consumer
+        depends_on:
+            - kafka
+        environment:
+            - LOG_LEVEL=debug
+            - LOG_FILE_NAME=api.log
+            - LOG_TO_FILE=false
+            - KAFKA_URL=kafka:9092
+            - KAFKA_TOPIC_TO_CONSUMER=async-topic
     zookeeper:
         image: wurstmeister/zookeeper
         ports:
