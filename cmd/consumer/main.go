@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -15,17 +16,26 @@ func main() {
 
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
-	time.Sleep(5000 * time.Millisecond) // Hack to wait kafka starts. Don't do this in production
+
+	// Hack to wait kafka starts. Don't do this in production.
+	// See https://docs.docker.com/compose/startup-order/ to better solutions.
+	time.Sleep(5000 * time.Millisecond)
 
 	kafkaURL := os.Getenv("KAFKA_URL")
 	master, err := sarama.NewConsumer([]string{kafkaURL}, config)
 	if err != nil {
 		panic(err)
 	}
+
 	defer master.Close()
 
 	topic := os.Getenv("KAFKA_TOPIC_TO_CONSUMER")
-	consumer, err := master.ConsumePartition(topic, 0, sarama.OffsetOldest)
+	partition, err := strconv.Atoi(os.Getenv("KAFKA_PARTITION"))
+	if err != nil {
+		partition = 0
+	}
+
+	consumerPartition, err := master.ConsumePartition(topic, int32(partition), sarama.OffsetOldest)
 	if err != nil {
 		panic(err)
 	}
@@ -39,9 +49,9 @@ func main() {
 	go func() {
 		for {
 			select {
-			case err := <-consumer.Errors():
+			case err := <-consumerPartition.Errors():
 				logger.Error("Consumer", "main", "", "", "Receiving messages", "Error", err.Error())
-			case msg := <-consumer.Messages():
+			case msg := <-consumerPartition.Messages():
 				messageCountStart++
 				logger.Info("Consumer", "main", "", "", "Receiving messages", "Success", fmt.Sprintf("key: %s - value: %s", msg.Key, msg.Value))
 			case <-signals:

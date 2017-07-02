@@ -15,6 +15,7 @@ services:
             - KAFKA_URL=kafka:9092
             - KAFKA_SYNC_TOPIC=sync-topic
             - KAFKA_ASYNC_TOPIC=async-topic
+            - KAFKA_PARTITION=0
     sync_consumer:
         build:
             context: .
@@ -27,6 +28,7 @@ services:
             - LOG_TO_FILE=false
             - KAFKA_URL=kafka:9092
             - KAFKA_TOPIC_TO_CONSUMER=sync-topic
+            - KAFKA_PARTITION=0
     async_consumer:
         build:
             context: .
@@ -39,6 +41,7 @@ services:
             - LOG_TO_FILE=false
             - KAFKA_URL=kafka:9092
             - KAFKA_TOPIC_TO_CONSUMER=async-topic
+            - KAFKA_PARTITION=0
     zookeeper:
         image: wurstmeister/zookeeper
         ports:

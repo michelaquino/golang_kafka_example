@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/Shopify/sarama"
 	"github.com/labstack/echo"
@@ -44,10 +45,16 @@ func SendAsyncMessage(echoContext echo.Context) error {
 	defer producer.Close()
 
 	asyncTopic := os.Getenv("KAFKA_ASYNC_TOPIC")
+	partitionToEnquene, err := strconv.Atoi(os.Getenv("KAFKA_PARTITION"))
+	if err != nil {
+		partitionToEnquene = 0
+	}
+
 	kafkaMessage := sarama.ProducerMessage{
-		Topic: asyncTopic,
-		Key:   sarama.StringEncoder(message.Key),
-		Value: sarama.StringEncoder(message.Value),
+		Topic:     asyncTopic,
+		Key:       sarama.StringEncoder(message.Key),
+		Value:     sarama.StringEncoder(message.Value),
+		Partition: int32(partitionToEnquene),
 	}
 
 	for {
